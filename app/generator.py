@@ -1,0 +1,35 @@
+# app/generator.py
+from typing import List, Optional, Tuple
+# probably need to import solver too
+
+def generate_puzzle(
+    seed: Optional[int] = None,
+    require_solvable: bool = True,
+    max_tries: int = 500,
+) -> Tuple[List[int], bool]:
+    """Draw a 4-number 'hand' (1..13 each) for the 24 game.
+
+    Parameters
+    ----------
+    seed : Optional[int]
+        Optional RNG seed for reproducibility.
+    require_solvable : bool
+        If True, keep drawing until a solvable hand is found (or max_tries hit).
+    max_tries : int
+        Upper bound on attempts when require_solvable is True.
+
+    Returns
+    -------
+    (nums, solvable): (List[int], bool)
+        nums: List of four integers in [1,13]
+        solvable: whether the returned hand is solvable according to `solve24`.
+
+    Examples
+    --------
+    > nums, ok = generate_puzzle(seed=42, require_solvable=False)
+    > len(nums) == 4 and all(1 <= x <= 13 for x in nums)
+    True
+    """
+    # TODO: Implement RNG-based draw of 4 numbers in 1..13 and (optionally)
+    # loop until `solve24(nums)` indicates solvable. Return (nums, is_solvable).
+    raise NotImplementedError("TODO: implement generate_puzzle")

@@ -1,0 +1,46 @@
+# app/main.py
+from typing import Annotated, Optional
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+from .solver import solve24
+from .checker import check_expression
+from .generator import generate_puzzle
+
+app = FastAPI(title="24 Game API", version="1.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # tighten in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+Nums = Annotated[list[int], Field(min_length=4, max_length=4)]
+
+class Puzzle(BaseModel):
+    nums: Nums
+
+class Attempt(Puzzle):
+    expression: str
+
+@app.get("/puzzle")
+def new_puzzle(
+    solvable: bool = Query(True, description="Guarantee solvable hand"),
+    seed: Optional[int] = Query(None, description="Optional seed for reproducibility"),
+):
+    nums, is_sol = generate_puzzle(seed=seed, require_solvable=solvable)
+    # Don’t leak the solution here; the client can call /check or /solve if you want hints.
+    return {"nums": nums, "solvable": is_sol}
+
+@app.post("/solve")
+def solve_endpoint(p: Puzzle):
+    expr = solve24(p.nums)
+    return {"solvable": expr is not None, "expression": expr}
+
+@app.post("/check")
+def check_endpoint(a: Attempt):
+    ok, msg = check_expression(a.nums, a.expression)
+    return {"ok": ok, "message": msg}
