@@ -1,6 +1,27 @@
 # app/solver.py
 from typing import List, Optional
 
+def gather(nums: List[int]):
+    out = []
+    for first_num in range(len(nums)):
+        for second_num in range(first_num + 1, len(nums)):
+            card1, card2 = nums[first_num], nums[second_num]
+            remaining = nums.copy()
+            remaining.remove(card1)
+            remaining.remove(card2)
+            possible_vals = [
+                [card1[0] + card2[0], f"({card1[1]} + {card2[1]})"],
+                [card1[0] - card2[0], f"({card1[1]} - {card2[1]})"],
+                [card2[0] - card1[0], f"({card2[1]} - {card1[1]})"],
+                [card1[0] * card2[0], f"({card1[1]} * {card2[1]})"],
+            ]
+            if card2[0]: possible_vals.append([card1[0] / card2[0], f"({card1[1]} / {card2[1]})"])
+            if card1[0]: possible_vals.append([card2[0] / card1[0], f"({card2[1]} / {card1[1]})"])
+            for i in possible_vals:
+                out.append([i] + remaining)
+    return out
+
+
 def solve24(nums: List[int]) -> Optional[str]:
     """Return an expression string that evaluates exactly to 24 using the
     four integers in `nums` each exactly once with + - * / and parentheses.
@@ -25,4 +46,21 @@ def solve24(nums: List[int]) -> Optional[str]:
     """
     # TODO: Implement search over permutations, operator choices, and parenthesizations
     # using exact arithmetic. Return the first valid expression string or None.
-    raise NotImplementedError("TODO: implement solve24")
+    nums = [[i, str(i)] for i in nums]
+    stack = gather(nums)
+    while len(stack) != 0:
+        if len(stack[-1]) == 1:
+            solution = stack.pop()[0]
+            if 23.9 <= solution[0] <= 24.1:
+                return solution[1]
+        else:
+            stack.extend(gather(stack.pop()))
+    return None
+
+if __name__ == "__main__":
+    print(solve24([12, 11, 1, 6]))
+    
+
+
+
+

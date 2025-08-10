@@ -1,6 +1,7 @@
 # app/generator.py
 from typing import List, Optional, Tuple
-# probably need to import solver too
+import solver
+import random
 
 def generate_puzzle(
     seed: Optional[int] = None,
@@ -32,4 +33,10 @@ def generate_puzzle(
     """
     # TODO: Implement RNG-based draw of 4 numbers in 1..13 and (optionally)
     # loop until `solve24(nums)` indicates solvable. Return (nums, is_solvable).
-    raise NotImplementedError("TODO: implement generate_puzzle")
+    cards = [random.randint(1, 13) for i in range(4)]
+    while solver.solve24(cards) == None:
+        cards = [random.randint(1, 13) for i in range(4)]
+    return cards
+
+if __name__ == "__main__":
+    print(generate_puzzle())

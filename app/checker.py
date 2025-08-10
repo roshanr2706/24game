@@ -35,4 +35,51 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
     """
     # TODO: Parse safely (no eval), enforce allowed tokens, multiset-match the integers,
     # evaluate with exact arithmetic, and return detailed feedback.
-    raise NotImplementedError("TODO: implement check_expression")
+
+    # parsed = []
+    # operations = ["+", "-", "*", "/"]
+    # current_exp = ""
+    # for i in expression.replace(" ", ""):
+    #     if i == "(":
+    #         parsed.append(current_exp)
+    #         current_exp = ""
+    #     elif i == ")":
+    #         parsed.append(current_exp)
+    #         current_exp = ""
+    #     else:
+    #         current_exp += i
+    # parsed.append(current_exp)
+    # print(parsed)
+    # i = 0
+    # while len(parsed) > 0:
+    #     if len(parsed[i]) > 1:
+    #         for i in operations:
+    #             chunk = parsed[i].split(i)
+    #             if len(chunk) > 1:
+    #                 match i:
+    #                     case "+":
+
+    #                         chunk[0] + chunk[1]
+    #                     case "-":
+    #                         pass
+    #                     case "*":
+    #                         pass
+    #                     case "/":
+    #                         pass
+    #                 print(chunk)
+    prev_bracket_location = []
+    i = 0
+    while i < len(expression):
+        if expression[i] == "(":
+            prev_bracket_location.append(i)
+        elif expression[i] == ")":
+            loc = prev_bracket_location.pop()
+            expression = expression[:loc] + f"aso" + expression[i + 1:]
+            i = loc
+        i += 1
+    print(expression)
+
+
+
+if __name__ == "__main__":
+    check_expression([12, 11, 1, 6], "((11 + 1) / (6 / 12))")
