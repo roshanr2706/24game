@@ -67,15 +67,25 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
     #                     case "/":
     #                         pass
     #                 print(chunk)
-    prev_bracket_location = []
+    expression = "(" + expression + ")"
+    bracket_loc_stack = []  # stack for bracket positions
+    Div_mult_loc_queue = []  # queue for multiplication/division
+    Sub_add_loc_queue = []  # queue for addition/subtraction
+    Num_stack = []
     i = 0
     while i < len(expression):
         if expression[i] == "(":
-            prev_bracket_location.append(i)
+            bracket_loc_stack.append(i)
         elif expression[i] == ")":
-            loc = prev_bracket_location.pop()
+            loc = bracket_loc_stack.pop()
             expression = expression[:loc] + f"aso" + expression[i + 1:]
             i = loc
+        # elif expression[i].isdigit():
+        #     if (expression[i + 1])
+        #     if expression[i] in nums:
+        #         nums.remove(expression[i])
+        #     else:
+        #         return (False, "Incorrect, numbers mismatched")
         i += 1
     print(expression)
 
