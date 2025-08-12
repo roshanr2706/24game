@@ -67,29 +67,105 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
     #                     case "/":
     #                         pass
     #                 print(chunk)
-    expression = "(" + expression + ")"
-    bracket_loc_stack = []  # stack for bracket positions
-    Div_mult_loc_queue = []  # queue for multiplication/division
-    Sub_add_loc_queue = []  # queue for addition/subtraction
-    Num_stack = []
-    i = 0
-    while i < len(expression):
-        if expression[i] == "(":
-            bracket_loc_stack.append(i)
-        elif expression[i] == ")":
-            loc = bracket_loc_stack.pop()
-            expression = expression[:loc] + f"aso" + expression[i + 1:]
-            i = loc
+    # expression = "(" + expression + ")"
+    # bracket_loc_stack = []  # stack for bracket positions
+    # Op_stack = []
+    # Num_stack = []
+    # i = 0
+    # while i < len(expression):
+    #     if expression[i] == "(":
+    #         bracket_loc_stack.append(i)
+    #     elif expression[i] == ")":
+    #         loc = bracket_loc_stack.pop()
+            
+
+    #         expression = expression[:loc] + f"aso" + expression[i + 1:]
+    #         i = loc
+        # elif expression[i] == "*":
+        #     Div_mult_loc_queue.append(["*", i])
+        # elif expression[i] == "/":
+        #     Div_mult_loc_queue.append(["/", i])
+        # elif expression[i] == "+":
+        #     Sub_add_loc_queue.append(["+", i])
+        # elif expression[i] == "-":
+        #     Sub_add_loc_queue.append(["-", i])
+        
+        
         # elif expression[i].isdigit():
         #     if (expression[i + 1])
         #     if expression[i] in nums:
         #         nums.remove(expression[i])
         #     else:
         #         return (False, "Incorrect, numbers mismatched")
+    #     i += 1
+    # print(expression)
+
+    # Shunting Yard
+
+    output_queue = []
+    operator_stack = []
+    operations = {"+" : 2, "-" : 2, "*" : 1, "/" : 1}
+    was_num = False
+    for i in expression:
+        if i.isdigit():
+            if was_num:
+                output_queue[-1] = output_queue[-1] + i
+            else:
+                output_queue.append(i)
+                was_num = True
+        elif i in operations.keys():
+            was_num = False
+            while len(operator_stack) > 0 and operator_stack[-1] in operations.keys() and operations[operator_stack[-1]] >= operations[i]:
+                output_queue.append(operator_stack.pop())
+            operator_stack.append(i)
+        elif i == "(":
+            was_num = False
+            operator_stack.append(i)
+        elif i == ")":
+            was_num = False
+            while len(operator_stack) > 0 and operator_stack[-1] != "(":
+                output_queue.append(operator_stack.pop())
+            if len(operator_stack) == 0:
+                return (False, "Brackets mismatched")
+            else:
+                operator_stack.pop()
+    output_queue.extend(operator_stack[::-1])
+
+    print(output_queue)
+
+    # Evaluating Post-fix expression
+    i = 0
+    while i < len(output_queue):
+        if output_queue[i] in operations.keys():
+            match output_queue.pop(i):
+                case "+":
+                    output_queue.insert(i - 2, output_queue.pop(i - 2) + output_queue.pop(i - 2))
+                    i -= 2
+                case "-":
+                    output_queue.insert(i - 2, output_queue.pop(i - 2) - output_queue.pop(i - 2))
+                    i -= 2
+                case "*":
+                    output_queue.insert(i - 2, output_queue.pop(i - 2) * output_queue.pop(i - 2))
+                    i -= 2
+                case "/":
+                    output_queue.insert(i - 2, output_queue.pop(i - 2) / output_queue.pop(i - 2))
+                    i -= 2
+        else:
+            output_queue[i] = int(output_queue[i])
+            if output_queue[i] in nums:
+                nums.remove(output_queue[i])
+            else:
+                return (False, "Numbers mismatched")
         i += 1
-    print(expression)
+    
+    print(output_queue[0])
+
+    if 24.1 >= output_queue[0] >= 23.9:
+        return (True, "Correct!")
+    else:
+        return (False, "Result not 24")
 
 
 
 if __name__ == "__main__":
-    check_expression([12, 11, 1, 6], "((11 + 1) / (6 / 12))")
+    print(check_expression([12, 11, 1, 6], "(11 + 1) / (6 / 12)"))
