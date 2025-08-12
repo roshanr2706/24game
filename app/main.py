@@ -28,13 +28,10 @@ class Attempt(Puzzle):
     expression: str
 
 @app.get("/puzzle")
-def new_puzzle(
-    solvable: bool = Query(True, description="Guarantee solvable hand"),
-    seed: Optional[int] = Query(None, description="Optional seed for reproducibility"),
-):
-    nums, is_sol = generate_puzzle(seed=seed, require_solvable=solvable)
+def new_puzzle():
+    nums = generate_puzzle()
     # Don’t leak the solution here; the client can call /check or /solve if you want hints.
-    return {"nums": nums, "solvable": is_sol}
+    return {"nums": nums}
 
 @app.post("/solve")
 def solve_endpoint(p: Puzzle):

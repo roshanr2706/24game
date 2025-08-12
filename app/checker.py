@@ -115,7 +115,7 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
                 was_num = True
         elif i in operations.keys():
             was_num = False
-            while len(operator_stack) > 0 and operator_stack[-1] in operations.keys() and operations[operator_stack[-1]] >= operations[i]:
+            while len(operator_stack) > 0 and operator_stack[-1] in operations.keys() and operations[operator_stack[-1]] <= operations[i]:
                 output_queue.append(operator_stack.pop())
             operator_stack.append(i)
         elif i == "(":
@@ -168,4 +168,4 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
 
 
 if __name__ == "__main__":
-    print(check_expression([12, 11, 1, 6], "(11 + 1) / (6 / 12)"))
+    print(check_expression([5, 4, 13, 9], "5 * 4 + 13 - 9"))
