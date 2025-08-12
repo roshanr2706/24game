@@ -160,6 +160,9 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
     
     print(output_queue[0])
 
+    if len(nums) > 0:
+        return (False, "Didn't use all the cards")
+
     if 24.1 >= output_queue[0] >= 23.9:
         return (True, "Correct!")
     else:
