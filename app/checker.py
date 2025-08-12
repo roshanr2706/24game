@@ -36,72 +36,7 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
     # TODO: Parse safely (no eval), enforce allowed tokens, multiset-match the integers,
     # evaluate with exact arithmetic, and return detailed feedback.
 
-    # parsed = []
-    # operations = ["+", "-", "*", "/"]
-    # current_exp = ""
-    # for i in expression.replace(" ", ""):
-    #     if i == "(":
-    #         parsed.append(current_exp)
-    #         current_exp = ""
-    #     elif i == ")":
-    #         parsed.append(current_exp)
-    #         current_exp = ""
-    #     else:
-    #         current_exp += i
-    # parsed.append(current_exp)
-    # print(parsed)
-    # i = 0
-    # while len(parsed) > 0:
-    #     if len(parsed[i]) > 1:
-    #         for i in operations:
-    #             chunk = parsed[i].split(i)
-    #             if len(chunk) > 1:
-    #                 match i:
-    #                     case "+":
-
-    #                         chunk[0] + chunk[1]
-    #                     case "-":
-    #                         pass
-    #                     case "*":
-    #                         pass
-    #                     case "/":
-    #                         pass
-    #                 print(chunk)
-    # expression = "(" + expression + ")"
-    # bracket_loc_stack = []  # stack for bracket positions
-    # Op_stack = []
-    # Num_stack = []
-    # i = 0
-    # while i < len(expression):
-    #     if expression[i] == "(":
-    #         bracket_loc_stack.append(i)
-    #     elif expression[i] == ")":
-    #         loc = bracket_loc_stack.pop()
-            
-
-    #         expression = expression[:loc] + f"aso" + expression[i + 1:]
-    #         i = loc
-        # elif expression[i] == "*":
-        #     Div_mult_loc_queue.append(["*", i])
-        # elif expression[i] == "/":
-        #     Div_mult_loc_queue.append(["/", i])
-        # elif expression[i] == "+":
-        #     Sub_add_loc_queue.append(["+", i])
-        # elif expression[i] == "-":
-        #     Sub_add_loc_queue.append(["-", i])
-        
-        
-        # elif expression[i].isdigit():
-        #     if (expression[i + 1])
-        #     if expression[i] in nums:
-        #         nums.remove(expression[i])
-        #     else:
-        #         return (False, "Incorrect, numbers mismatched")
-    #     i += 1
-    # print(expression)
-
     # Shunting Yard
-
     output_queue = []
     operator_stack = []
     operations = {"+" : 2, "-" : 2, "*" : 1, "/" : 1}
@@ -131,34 +66,33 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
                 operator_stack.pop()
     output_queue.extend(operator_stack[::-1])
 
-    print(output_queue)
-
     # Evaluating Post-fix expression
     i = 0
-    while i < len(output_queue):
-        if output_queue[i] in operations.keys():
-            match output_queue.pop(i):
-                case "+":
-                    output_queue.insert(i - 2, output_queue.pop(i - 2) + output_queue.pop(i - 2))
-                    i -= 2
-                case "-":
-                    output_queue.insert(i - 2, output_queue.pop(i - 2) - output_queue.pop(i - 2))
-                    i -= 2
-                case "*":
-                    output_queue.insert(i - 2, output_queue.pop(i - 2) * output_queue.pop(i - 2))
-                    i -= 2
-                case "/":
-                    output_queue.insert(i - 2, output_queue.pop(i - 2) / output_queue.pop(i - 2))
-                    i -= 2
-        else:
-            output_queue[i] = int(output_queue[i])
-            if output_queue[i] in nums:
-                nums.remove(output_queue[i])
+    try:
+        while i < len(output_queue):
+            if output_queue[i] in operations.keys():
+                match output_queue.pop(i):
+                    case "+":
+                        output_queue.insert(i - 2, output_queue.pop(i - 2) + output_queue.pop(i - 2))
+                        i -= 2
+                    case "-":
+                        output_queue.insert(i - 2, output_queue.pop(i - 2) - output_queue.pop(i - 2))
+                        i -= 2
+                    case "*":
+                        output_queue.insert(i - 2, output_queue.pop(i - 2) * output_queue.pop(i - 2))
+                        i -= 2
+                    case "/":
+                        output_queue.insert(i - 2, output_queue.pop(i - 2) / output_queue.pop(i - 2))
+                        i -= 2
             else:
-                return (False, "Numbers mismatched")
-        i += 1
-    
-    print(output_queue[0])
+                output_queue[i] = int(output_queue[i])
+                if output_queue[i] in nums:
+                    nums.remove(output_queue[i])
+                else:
+                    return (False, "Numbers mismatched")
+            i += 1
+    except (IndexError, TypeError):
+        return (False, "Expression not formatted correctly")
 
     if len(nums) > 0:
         return (False, "Didn't use all the cards")
