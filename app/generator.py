@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 from . import solver
 import random
 
-def generate_puzzle() -> List[int]:
+def generate_puzzle(seed: Optional[int] = None) -> List[int]:
 
     """Draw a 4-number 'hand' (1..13 each) for the 24 game.
 
@@ -30,9 +30,11 @@ def generate_puzzle() -> List[int]:
     """
     # TODO: Implement RNG-based draw of 4 numbers in 1..13 and (optionally)
     # loop until `solve24(nums)` indicates solvable. Return (nums, is_solvable).
-    cards = [random.randint(1, 13) for i in range(4)]
+    if seed != None:
+        random.seed(seed)
+    cards = [random.randint(1, 13) for _ in range(4)]
     while solver.solve24(cards) == None:
-        cards = [random.randint(1, 13) for i in range(4)]
+        cards = [random.randint(1, 13) for _ in range(4)]
     return cards
 
 if __name__ == "__main__":
