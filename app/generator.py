@@ -1,13 +1,9 @@
 # app/generator.py
 from typing import List, Optional, Tuple
-import solver
+from . import solver
 import random
 
-def generate_puzzle(
-    seed: Optional[int] = None,
-    require_solvable: bool = True,
-    max_tries: int = 500,
-) -> Tuple[List[int], bool]:
+def generate_puzzle() -> List[int]:
     """Draw a 4-number 'hand' (1..13 each) for the 24 game.
 
     Parameters
