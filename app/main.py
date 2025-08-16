@@ -1,4 +1,5 @@
 # app/main.py
+# python -m uvicorn app.main:app --reload
 from typing import Annotated, Optional
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware

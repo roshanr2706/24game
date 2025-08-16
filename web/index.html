@@ -154,7 +154,7 @@
 
     async function newPuzzle() {
       setStatus('Generating puzzle…');
-      const res = await fetch(`${API}/puzzle?solvable=true`);
+      const res = await fetch(`${API}/puzzle`);
       const json = await res.json();
       renderCards(json.nums);
       setStatus('New hand dealt. Good luck!');
