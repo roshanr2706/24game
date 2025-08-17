@@ -14,7 +14,7 @@ app = FastAPI(title="24 Game API", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten in prod
+    allow_origins=["https://roshanr2706.github.io"],  # tighten in prod
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
