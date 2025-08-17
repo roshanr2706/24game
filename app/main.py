@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from .solver import solve24
 from .checker import check_expression
 from .generator import generate_puzzle
+from .versus import router as versus_router
 
 app = FastAPI(title="24 Game API", version="1.1.0")
 
@@ -42,3 +43,5 @@ def solve_endpoint(p: Puzzle):
 def check_endpoint(a: Attempt):
     ok, msg = check_expression(a.nums, a.expression)
     return {"ok": ok, "message": msg}
+
+app.include_router(versus_router)
