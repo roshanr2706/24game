@@ -120,6 +120,24 @@
       padding-left: 8px;
     }
 
+    /* Previous Solution box (Versus) */
+    .prev-solution {
+      display: none;
+      background: #0f1520;
+      border: 1px solid #1f2b3b;
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .prev-solution.show { display: block; }
+    .prev-solution .label { font-weight: 600; margin-right: 6px; }
+    .prev-solution .expr {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
     footer { color: var(--muted); font-size: 13px; text-align: center; opacity: .9; }
 
     @media (max-width: 560px) {
@@ -184,6 +202,12 @@
     <!-- Versus Scoreboard -->
     <div id="scoreBoard" class="scoreboard" role="region" aria-label="Scoreboard" aria-live="polite">
       <div id="scoreItems"></div>
+    </div>
+
+    <!-- Previous Solution (Versus) -->
+    <div id="prevSolution" class="prev-solution" role="region" aria-live="polite" aria-label="Previous solution">
+      <span class="label">Previous solution:</span>
+      <span id="prevExpr" class="expr"></span>
     </div>
 
     <section class="table">
@@ -369,7 +393,14 @@
         body: JSON.stringify({ nums: fillInputsFromCards(), expression })
       });
       const json = await res.json();
-      setStatus((json.ok ? '✅ ' : '❌ ') + json.message, json.ok);
+      setStatus((json.ok ? '✅ ' : '❌ ') + json.message + (json.ok ? ' Dealing next hand…' : ''), json.ok);
+
+      // Auto-regenerate next puzzle on correct answer in single-player
+      if (json.ok) {
+        setTimeout(() => {
+          if (!inVersus) newPuzzle();
+        }, 900);
+      }
     }
 
     function toggleLabels() { useFaceCards = !useFaceCards; renderCards(currentNums); }
@@ -398,7 +429,10 @@
     // Scoreboard helpers (Versus)
     function showScoreboard(show) {
       document.getElementById('scoreBoard').classList.toggle('show', !!show);
-      if (!show) document.getElementById('scoreItems').innerHTML = '';
+      if (!show) {
+        document.getElementById('scoreItems').innerHTML = '';
+        clearPrevSolution();
+      }
     }
     function renderScoreboard(players) {
       const list = document.getElementById('scoreItems');
@@ -409,6 +443,23 @@
       list.innerHTML = sorted.map((p, i) =>
         `<div class="score-item"><div class="name">${i + 1}. ${escapeHtml(p.name || 'Player')}</div><div class="score">${p.score ?? 0}</div></div>`
       ).join('');
+    }
+
+    // Previous Solution helpers (Versus)
+    function clearPrevSolution() {
+      const box = document.getElementById('prevSolution');
+      if (!box) return;
+      box.classList.remove('show');
+      const el = document.getElementById('prevExpr');
+      if (el) el.textContent = '';
+    }
+    function setPrevSolution(expr) {
+      const box = document.getElementById('prevSolution');
+      const el = document.getElementById('prevExpr');
+      if (!box || !el) return;
+      if (!expr) { clearPrevSolution(); return; }
+      el.textContent = String(expr);
+      box.classList.add('show');
     }
 
     // Tabs
@@ -479,6 +530,7 @@
         activeMode = null;
         resetCoopStats();
         showScoreboard(false); // will be shown when state arrives if versus
+        clearPrevSolution();
         setStatus('Connected. Wait for the puzzle…');
       };
       ws.onclose = () => {
@@ -488,6 +540,7 @@
         showCoopBar(false);
         showScoreboard(false);
         resetCoopStats();
+        clearPrevSolution();
         setStatus('Disconnected from room.');
         newPuzzle();
       };
@@ -504,6 +557,7 @@
               if (activeMode === 'coop') {
                 showCoopBar(true);
                 showScoreboard(false);
+                clearPrevSolution();
                 if (typeof msg.teamCorrect === 'number') {
                   coopCorrect = msg.teamCorrect;
                   document.getElementById('coopCorrect').textContent = String(coopCorrect);
@@ -536,6 +590,8 @@
                 else coopCorrect += 1;
                 document.getElementById('coopCorrect').textContent = String(coopCorrect);
                 stopCoopTimer();
+              } else if (activeMode === 'versus' && msg.expression) {
+                setPrevSolution(msg.expression);
               }
               setStatus(`${msg.message || 'Solved!'}${msg.expression ? ' Expression: ' + msg.expression : ''}`);
               if (activeMode === 'versus' && Array.isArray(msg.players)) {
