@@ -34,11 +34,6 @@ def new_puzzle():
     # Don’t leak the solution here; the client can call /check or /solve if you want hints.
     return {"nums": nums}
 
-@app.post("/solve")
-def solve_endpoint(p: Puzzle):
-    expr = solve24(p.nums)
-    return {"solvable": expr is not None, "expression": expr}
-
 @app.post("/check")
 def check_endpoint(a: Attempt):
     ok, msg = check_expression(a.nums, a.expression)
