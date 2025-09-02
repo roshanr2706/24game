@@ -14,7 +14,7 @@ app = FastAPI(title="24 Game API", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten in prod
+    allow_origins=["https://roshanr2706.github.io"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,11 +33,6 @@ def new_puzzle():
     nums = generate_puzzle()
     # Don’t leak the solution here; the client can call /check or /solve if you want hints.
     return {"nums": nums}
-
-@app.post("/solve")
-def solve_endpoint(p: Puzzle):
-    expr = solve24(p.nums)
-    return {"solvable": expr is not None, "expression": expr}
 
 @app.post("/check")
 def check_endpoint(a: Attempt):

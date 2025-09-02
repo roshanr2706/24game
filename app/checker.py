@@ -61,7 +61,7 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
             while len(operator_stack) > 0 and operator_stack[-1] != "(":
                 output_queue.append(operator_stack.pop())
             if len(operator_stack) == 0:
-                return (False, "Brackets mismatched")
+                return (False, "Expression not formatted correctly")
             else:
                 operator_stack.pop()
     output_queue.extend(operator_stack[::-1])
@@ -91,7 +91,7 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
                 else:
                     return (False, "Numbers mismatched")
             i += 1
-    except (IndexError, TypeError):
+    except:
         return (False, "Expression not formatted correctly")
 
     if len(nums) > 0:
@@ -105,4 +105,4 @@ def check_expression(nums: List[int], expression: str) -> Tuple[bool, str]:
 
 
 if __name__ == "__main__":
-    print(check_expression([5, 4, 13, 9], "5 * 4 + 13 - 9"))
+    print(check_expression([5, 4, 13, 9], "(((("))
