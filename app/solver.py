@@ -51,7 +51,7 @@ def solve24(nums: List[int]) -> Optional[str]:
     while len(stack) != 0:
         if len(stack[-1]) == 1:
             solution = stack.pop()[0]
-            if 23.9 <= solution[0] <= 24.1:
+            if 23.999 <= solution[0] <= 24.111:
                 return solution[1]
         else:
             stack.extend(gather(stack.pop()))
